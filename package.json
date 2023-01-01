@@ -6,6 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint --cache --fix",
+    "format": "echo format",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/Yuko-Kanai/my_google-apps-script#readme",
   "devDependencies": {
+    "eslint": "^8.31.0",
     "eslint-plugin-googleappsscript": "^1.0.4",
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0"
