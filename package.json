@@ -28,12 +28,12 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged", //<- コミット前にlint-stagedのコマンドが実行される
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
     "**/**/*.{js, ts}": [
-      //"npm run format",
+      "npm run format",
       "npm run lint"
     ]
   }
