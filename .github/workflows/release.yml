@@ -57,6 +57,7 @@ jobs:
         #deprecated run: echo ::set-output name=CURRENT_DATETIME::$(date +'%Y-%m-%d %H:%M:%S')
 
       - name: Upload files in study
+        # 同じrun内で実行しないとホームへ戻ってしまうので以下はすべて繋げて実行する
         run: |
           cd qa_process/study
           npx @google/clasp push --force
