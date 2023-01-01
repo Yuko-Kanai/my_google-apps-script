@@ -1,0 +1,8 @@
+{
+    "plugins": [
+      "googleappsscript"
+    ],
+    "env": {
+      "googleappsscript/googleappsscript": true
+    }
+}

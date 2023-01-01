@@ -4,6 +4,8 @@
   "description": "google apps script for my work",
   "main": "index.js",
   "scripts": {
+    "prepare": "husky install",
+    "lint": "eslint \"**/**/*.{js, ts}\" --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,8 +17,24 @@
   "bugs": {
     "url": "https://github.com/Yuko-Kanai/my_google-apps-script/issues"
   },
-  "homepage": "https://github.com/Yuko-Kanai/my_google-apps-script#readme",
   "dependencies": {
     "@google/clasp": "^2.4.2"
+  },
+  "homepage": "https://github.com/Yuko-Kanai/my_google-apps-script#readme",
+  "devDependencies": {
+    "eslint-plugin-googleappsscript": "^1.0.4",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged", //<- コミット前にlint-stagedのコマンドが実行される
+    }
+  },
+  "lint-staged": {
+    "**/**/*.{js, ts}": [
+      //"npm run format",
+      "npm run lint"
+    ]
   }
 }
