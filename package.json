@@ -1,0 +1,22 @@
+{
+  "name": "my_google-apps-script",
+  "version": "1.0.0",
+  "description": "google apps script for my work",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yuko-Kanai/my_google-apps-script.git"
+  },
+  "author": "Yuko Kanai (lvk)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yuko-Kanai/my_google-apps-script/issues"
+  },
+  "homepage": "https://github.com/Yuko-Kanai/my_google-apps-script#readme",
+  "dependencies": {
+    "@google/clasp": "^2.4.2"
+  }
+}
