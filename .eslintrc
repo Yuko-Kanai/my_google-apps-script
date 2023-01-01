@@ -1,4 +1,7 @@
 {
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
     "plugins": [
       "googleappsscript"
     ],

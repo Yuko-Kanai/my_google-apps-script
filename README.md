@@ -90,27 +90,30 @@ huskyとlint-stagedを使います。
 - `git commit`時に発生するGitフック「pre-commit」をhuskyでハンドリング
 - `lint-staged`ででGitのステージに上がっているファイルを対象にeslint等のコマンドを実行できる
 
+### フォーマットチェックなどのツールの準備
 1. インストール
 ```
 npm install -D husky lint-staged
 npm install -D eslint eslint-plugin-googleappsscript
-```
-3. huskyの有効化
-```
-npx husky install
+npm install -D xo prettier-config-xo
 ```
 
-4. 今後のためにprepareにhuskyの有効化を追記
+2. スクリプトの設定
+eslintとprettierでやりたいことを書きます。
 ```package.json
 "scripts": {
-    "prepare": "husky install"
+    "lint": "eslint --cache --fix",
+    "format": "prettier --write",
   },
 ```
 
-5. eslintの定義をします。
+3. eslintの定義をします。
 プロジェクトルートに`.eslintrc`ファイルを作成し以下の内容を記述します。
 ```
 {
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
     "plugins": [
       "googleappsscript"
     ],
@@ -119,19 +122,47 @@ npx husky install
     }
 }
 ```
-4. huskyでpre-commit内容を定義
+
+### pre-commitの設定
+1. インストール
+```
+npm install -D husky lint-staged
+```
+
+2. huskyの有効化
+```
+npx husky install
+```
+
+3. 今後のためにprepareにhuskyの有効化を追記
+```package.json
+"scripts": {
+    "prepare": "husky install"
+  },
+```
+
+4. huskyの初期準備
+package.jsonの最後（devDependenciesの後ろなど）に以下を追記します。
+```
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+```
+
+5. hooksの作成
 以下のコマンドにてlint-stafedを実行するpre-commitファイルを作成します。
 ```
 npx husky add .husky/pre-commit "npx lint-staged"
 ```
 
-5. lint-stagedで何をするかを定義
+6. lint-stagedで何をするかを定義
 package.jsonの最後（devDependenciesの後ろなど）に以下を追記します。
 ```
   "lint-staged": {
-    "*.js": [
+    "**/**/*.{js, ts}": [
       "npm run format",
       "npm run lint"
     ]
   }
-```
