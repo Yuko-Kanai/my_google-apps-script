@@ -1,5 +1,6 @@
 function myFunction() {
-  const value = 'hello';
+  const value = "hello";
+  ww;
   /* Browser.msgBox(value);*/
   console.log(value);
 }
