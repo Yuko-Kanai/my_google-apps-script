@@ -239,6 +239,7 @@ jobs:
         run: npx @google/clasp version ${{ steps.get_version.outputs.VERSION }}
 ```
 参考：https://docs.github.com/ja/actions/learn-github-actions/understanding-github-actions
+
 参考：https://dev.classmethod.jp/articles/github-actions-gas-deploy/
 
 3. ローカルの`~/.clasprc.json`ファイルの内容を、Githubの環境変数に設定して、前手順の25行目のファイル作成時に参照できるようにします。

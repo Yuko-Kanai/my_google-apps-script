@@ -1,7 +1,10 @@
 name: Publish Release
-on: [push]
-  tags:
-    - "v*"
+
+on:
+  push:
+    tags:
+      - "v*"
+
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
