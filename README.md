@@ -272,3 +272,9 @@ clacp cloneをしたディレクトリには`.clasp.json`ファイルが作成�
 ```:変更後
 "rootDir":"./study"
 ```
+
+5. ワークフローがtagをつけたpushに対応しているため、デプロイしたいときは、tagをつける必要があります。
+```:例
+git commit -m "github actions 対応"
+git tag -a v1.0 -m "version 1.0"
+git push
