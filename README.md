@@ -93,7 +93,6 @@ huskyとlint-stagedを使います。
 ### フォーマットチェックなどのツールの準備
 1. インストール
 ```
-npm install -D husky lint-staged
 npm install -D eslint eslint-plugin-googleappsscript
 npm install -D xo prettier-config-xo
 ```
@@ -166,3 +165,88 @@ package.jsonの最後（devDependenciesの後ろなど）に以下を追記し�
       "npm run lint"
     ]
   }
+
+# GitHub ActionsでGASへのデプロイまで行う
+これまでは、GASへのpushとgithubへのpush両方手動で行なっていましたが、githubへのpushでGASへのpushも行うようにします。
+
+1. Github Actionsのワークフローファイルを格納するためのディレクトリを作成します。
+```
+mkdir .github
+mkdir .github/workflows
+```
+
+2. release.ymlを作成します。
+25行目の~/.clasprc.jsonファイルは、claspをインストールしたローカル端末に作成されていますがシークレット情報のためgithubにあげられるものではありません。
+そのためここでは、github上でclaspコマンドを使うためにgithub上でclasprc.jsonファイルを作成しています。
+
+```:release.yml
+name: Publish Release
+on: [push]
+  tags:
+    - "v*"
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-latest
+
+    env:
+      CLASPRC_ACCESS_TOKEN: ${{ secrets.CLASPRC_ACCESS_TOKEN }}
+      CLASPRC_CLIENT_ID: ${{ secrets.CLASPRC_CLIENT_ID }}
+      CLASPRC_CLIENT_SECRET: ${{ secrets.CLASPRC_CLIENT_SECRET }}
+      CLASPRC_EXPIRY_DATE: ${{ secrets.CLASPRC_EXPIRY_DATE }}
+      CLASPRC_ID_TOKEN: ${{ secrets.CLASPRC_ID_TOKEN }}
+      CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install Clasp
+        run: |
+          npm init -y
+          npm install clasp -g
+      - name: Create ~/.clasprc.json
+        run: |
+          echo $(cat <<-EOS
+          {
+            "token": {
+              "access_token": "${CLASPRC_ACCESS_TOKEN}",
+              "scope": "https://www.googleapis.com/auth/script.deployments https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file openid https://www.googleapis.com/auth/service.management https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/logging.read https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/script.webapp.deploy",
+              "token_type": "Bearer",
+              "id_token": "${CLASPRC_ID_TOKEN}",
+              "expiry_date": ${CLASPRC_EXPIRY_DATE},
+              "refresh_token": "${CLASPRC_REFRESH_TOKEN}"
+            },
+            "oauth2ClientSettings": {
+              "clientId": "${CLASPRC_CLIENT_ID}",
+              "clientSecret": "${CLASPRC_CLIENT_SECRET}",
+              "redirectUri": "http://localhost"
+            },
+            "isLocalCreds": false
+          }
+          EOS
+          ) > ~/.clasprc.json
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
+      - name: Upload files
+        run: npx @google/clasp push --force
+
+      - name: Add version
+        run: npx @google/clasp version ${{ steps.get_version.outputs.VERSION }}
+```
+参考：https://docs.github.com/ja/actions/learn-github-actions/understanding-github-actions
+参考：https://dev.classmethod.jp/articles/github-actions-gas-deploy/
+
+3. ローカルの`~/.clasprc.json`ファイルの内容を、Githubの環境変数に設定して、前手順の25行目のファイル作成時に参照できるようにします。
+Githubへアクセスし、対象のリポジトリ＞settings>Secrets>Actionsの「New repository secret」を押下して以下を追加
+- access_tokenの値
+- id_tokenの値
+- refresh_tokenの値
+- clientIdの値
+- clientSecretの値
+
+
