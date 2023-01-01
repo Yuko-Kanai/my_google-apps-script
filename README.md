@@ -181,9 +181,12 @@ mkdir .github/workflows
 
 ```:release.yml
 name: Publish Release
-on: [push]
-  tags:
-    - "v*"
+
+on:
+  push:
+    tags:
+      - "v*"
+
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
@@ -232,15 +235,24 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
-      - name: Upload files
-        run: npx @google/clasp push --force
-
+      - name: Upload files in study
+        run: |
+          cd qa_process/study
+          npx @google/clasp push --force
       - name: Add version
         run: npx @google/clasp version ${{ steps.get_version.outputs.VERSION }}
 ```
 参考：https://docs.github.com/ja/actions/learn-github-actions/understanding-github-actions
 
 参考：https://dev.classmethod.jp/articles/github-actions-gas-deploy/
+
+また、ここの部分はgasの種類分定義する必要があります。
+```
+      - name: Upload files in study
+        run: |
+          cd qa_process/study
+          npx @google/clasp push --force
+```
 
 3. ローカルの`~/.clasprc.json`ファイルの内容を、Githubの環境変数に設定して、前手順の25行目のファイル作成時に参照できるようにします。
 Githubへアクセスし、対象のリポジトリ＞settings>Secrets>Actionsの「New repository secret」を押下して以下を追加
@@ -250,4 +262,13 @@ Githubへアクセスし、対象のリポジトリ＞settings>Secrets>Actions�
 - clientIdの値
 - clientSecretの値
 
-
+4. .clasp.jsonのルートディレクトリをgithubにも対応させる。
+clacp cloneをしたディレクトリには`.clasp.json`ファイルが作成されますが絶対パスのため、このままだとGithub上で`appsscript.json`などを参照できません。
+これを
+```:変更前
+"rootDir":"/Users/yuko-kanai/work/my_google-apps-script/qa_process/study"
+```
+こうします
+```:変更後
+"rootDir":"./study"
+```

@@ -53,8 +53,10 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
-      - name: Upload files
-        run: npx @google/clasp push --force
+      - name: Upload files in study
+        run: |
+          cd qa_process/study
+          npx @google/clasp push --force
 
       - name: Add version
         run: npx @google/clasp version ${{ steps.get_version.outputs.VERSION }}
