@@ -53,12 +53,11 @@ jobs:
 
       - name: Get current datetime
         id: get_current_datetime
-        run: echo ::set-output name=CURRENT_DATETIME::$(date +'%Y-%m-%d %H:%M:%S')
+        run: echo "CURRENT_DATETIME=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+        #deprecated run: echo ::set-output name=CURRENT_DATETIME::$(date +'%Y-%m-%d %H:%M:%S')
 
       - name: Upload files in study
         run: |
           cd qa_process/study
           npx @google/clasp push --force
-
-      - name: Add version
-        run: npx @google/clasp version ${{ steps.get_current_datetime.outputs.CURRENT_DATETIME }}
+          npx @google/clasp version ${{ steps.get_current_datetime.outputs.CURRENT_DATETIME }}
