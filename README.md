@@ -165,7 +165,7 @@ package.jsonの最後（devDependenciesの後ろなど）に以下を追記し�
       "npm run lint"
     ]
   }
-
+```
 # GitHub ActionsでGASへのデプロイまで行う
 これまでは、GASへのpushとgithubへのpush両方手動で行なっていましたが、githubへのpushでGASへのpushも行うようにします。
 
