@@ -199,6 +199,7 @@ jobs:
       CLASPRC_EXPIRY_DATE: ${{ secrets.CLASPRC_EXPIRY_DATE }}
       CLASPRC_ID_TOKEN: ${{ secrets.CLASPRC_ID_TOKEN }}
       CLASPRC_REFRESH_TOKEN: ${{ secrets.CLASPRC_REFRESH_TOKEN }}
+      TZ: 'Asia/Tokyo' # タイムゾーン指定
 
     steps:
       - name: Checkout
@@ -232,16 +233,19 @@ jobs:
           }
           EOS
           ) > ~/.clasprc.json
-      - name: Get version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
+      - name: Get current datetime
+        id: get_current_datetime
+        run: echo ::set-output name=CURRENT_DATETIME::$(date +'%Y-%m-%d %H:%M:%S')
 
       - name: Upload files in study
         run: |
           cd qa_process/study
           npx @google/clasp push --force
+
       - name: Add version
-        run: npx @google/clasp version ${{ steps.get_version.outputs.VERSION }}
+        run: npx @google/clasp version ${{ steps.get_current_datetime.outputs.CURRENT_DATETIME }}
+
 ```
 参考：https://docs.github.com/ja/actions/learn-github-actions/understanding-github-actions
 
@@ -273,9 +277,3 @@ clacp cloneをしたディレクトリには`.clasp.json`ファイルが作成�
 ```:変更後
 "rootDir":"./"
 ```
-
-5. ワークフローがtagをつけたpushに対応しているため、デプロイしたいときは、tagをつける必要があります。
-```:例
-git commit -m "github actions 対応"
-git tag -a v1.0 -m "version 1.0"
-git push origin --tags
