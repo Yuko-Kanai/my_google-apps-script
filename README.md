@@ -278,4 +278,4 @@ clacp cloneをしたディレクトリには`.clasp.json`ファイルが作成�
 ```:例
 git commit -m "github actions 対応"
 git tag -a v1.0 -m "version 1.0"
-git push
+git push origin --tags
